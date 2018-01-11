@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+   <!-- %p 输出优先级，eg: DEBUG，INFO，WARN，ERROR，FATAL -->  
+   <!-- %r 输出自应用启动到输出该log信息耗费的毫秒数  -->  
+   <!-- %c 输出所属的类目，通常就是所在类的全名. eg: com.carl.log.Demo1 -->  
+   <!-- %t 输出产生该日志事件的线程名 -->  
+   <!-- %n 输出一个回车换行符，Windows平台为“/r/n”，Unix平台为“/n” -->  
+   <!-- %d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：
+   		%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
+   		%d{yyy MMM dd HH:mm:ss}: 2017 六月 03 14:38:35
+   		%d{yyy MM dd HH:mm:ss}: 2017 06 03 14:44:58
+   -->  
+   <!-- %l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。eg：com.carl.log.Demo1.info(Demo1.java:15)  -->  
+   <!--    %m 输出代码指定信息，如info(“message”),输出message  -->
+      <!-- Log4j提供的appender有以下几种:  -->  
+      <!-- org.apache.log4j.ConsoleAppender(控制台),  -->  
+      <!-- org.apache.log4j.FileAppender(文件),  -->  
+      <!-- org.apache.log4j.DailyRollingFileAppender(每天产生一个日志文件), -->  
+      <!-- org.apache.log4j.RollingFileAppender(文件大小到达指定尺寸的时候产生一个新的文件),  -->  
+      <!-- org.apache.log4j.WriterAppender(将日志信息以流格式发送到任意指定的地方)   -->  
+      
+    <!-- appender中元素是有顺序的， 需要按照以下顺序罗列： errorHandler?,param*,layout?,filter*,appender-ref* -->
+    <!-- name：相当于当前appender的唯一编号， class：指定该通道日志输出类型 -->
+	<appender name="file" class="org.apache.log4j.RollingFileAppender">
+	
+	    <param name="Encoding" value="UTF-8"/>
+		<!-- 指定日志输出文件,如果不是绝对路径，则以项目的根目录为当前目录 -->
+		<param name="file" value="E:/java/eclipse_logs/2file.log" />
+		<!-- true：在原有日志的基础上追加内容， false：新日志覆盖原有的日志 -->
+		<param name="append" value="false" />
+		<!-- MaxBackupIndex:查询资料解释为日志备份的数量， 暂时还未发现实际的作用 -->
+		<param name="MaxBackupIndex" value="10" />
+		<!-- 打印日志的格式 -->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p (%c:%L)- %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Encoding" value="UTF-8"/>
+		<!-- 打印日志的格式 -->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyy MM dd HH:mm:ss} %t %c %l %n" />
+		</layout>
+		<!--滤镜设置输出的级别-->
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<!-- 输出的最低级别日志 -->
+			<param name="levelMin" value="debug" />
+			<!-- 输出的最高级别日志 -->
+			<param name="levelMax" value="info" />
+		</filter>
+	</appender>
+	
+	<!-- 不同级别的日志输出到不同文件中。 -->
+	<appender name="info-file" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="info.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="500KB" />
+		<param name="MaxBackupIndex" value="2" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyy MM dd HH:mm:ss} %t %c %l %n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+		</filter>
+	</appender>
+	<appender name="debug-file" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="debug.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="50KB" />
+		<param name="MaxBackupIndex" value="2" />
+		<layout class="org.apache.log4j.PatternLayout" />
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="debug" />
+			<param name="LevelMin" value="debug" />
+		</filter>
+	</appender>
+	<!-- org.apache.log4j.DailyRollingFileAppender: 每天生成一个文件。 到第二天后日志文件才会被加上日期； 修改系统日期，就能看到效果了 -->
+	<appender name="daily-file" class="org.apache.log4j.DailyRollingFileAppender">
+		<!-- 日志文件名 -->
+		<param name="File" value="daily-file.log" />
+		<!-- 日志文件名后面的日期格式 -->
+		<param name="DatePattern" value="yyyy-MM-dd" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyy MM dd HH:mm:ss}: 2017 06 03 14:44:58" />
+		</layout>
+	</appender>
+
+	<logger name="com.carl1" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="info-file" />
+	</logger>
+	
+<!-- 	<category name="com.carl" additivity="true">
+		<priority value="debug" />
+		<appender-ref ref="console.CONSOLE" />
+		<appender-ref ref="file.text.DATE_FILE" />
+	</category> -->
+	
+    <category name="carl2" additivity="false">  
+       <priority value="debug" />  
+       <appender-ref ref="info-file" />  
+       <appender-ref ref="debug-file" />  
+   </category> 
+        
+	<!-- root是必须存在的节点 -->
+	<root>
+		<!-- error>warn>info>debug -->
+		<!-- 设置要打印的最低日志级别 -->
+		<priority value="debug"/>  
+<!--         <level value="debug"/> -->
+<!--         <appender-ref ref="file"/> -->
+<!--         <appender-ref ref="console"/> -->
+<!-- 		<appender-ref ref="debug-file" /> -->
+<!-- 		<appender-ref ref="info-file" /> -->
+<!-- 		<appender-ref ref="daily-file" /> -->
+<!-- 		<appender-ref ref="console" /> -->
+    </root>
+</log4j:configuration>
